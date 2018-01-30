@@ -16,6 +16,7 @@ subroutine playTicTacToe()
 	integer :: gameState = 1
 	integer :: playerMove;
 	integer :: compMove;
+	integer :: moveCount = 0;
 	
 	write(*,*) 'TicTacToe'
 	write(*,*) '---------'
@@ -30,10 +31,17 @@ subroutine playTicTacToe()
 		
 		playerMove = getMove(b)
 		b(playerMove:playerMove) = 'X'
+		moveCount = moveCount + 1
+		if (moveCount > 8) then
+			write(*,*) 'Tie game'
+			call showBoard(b)
+			exit
+		end if
 		call showBoard(b)
+		!call chkovr(b)
 		compMove = pickMove(b)
-		write(*,*) compMove
 		b(compMove:compMove) = 'O'
+		moveCount = moveCount + 1
 		call showBoard(b)
 		
 		if (gameState == 0) exit
@@ -45,11 +53,15 @@ end subroutine playTicTacToe
 integer function pickMove(b)
 	
 	character(len=9), intent(in) :: b
-	integer :: checkSum = 0
-	integer :: checkComplete = 0
+	integer :: checkSum
 	integer :: i
 	integer :: output = 0
+	real :: n
 	
+	integer, allocatable :: seed(:)
+	integer :: size, clock
+	
+	checkSum = 0	
 	!first row
 	do i = 1, 3
 		if (b(i:i) == 'O') then
@@ -60,7 +72,8 @@ integer function pickMove(b)
 			output = i !in case either of the two success cases happen, keep track of blank space
 		end if
 	end do
-	if (checkSum == 8 .or. checkSum == 2) then
+	write(*,*) checkSum
+	if ((checkSum == 8) .or. (checkSum == 2)) then
 		pickMove = output
 		go to 20
 	end if
@@ -178,13 +191,17 @@ integer function pickMove(b)
 	end if
 	
 	!pick randomly
+	call random_seed(size=size)
+	allocate(seed(size))
+	call system_clock(count=clock)
+	call random_seed(put=seed)
 	do
-		output = int(rand()*9)+1
-		if (b(output:output) == ' ') exit
-		write(*,*) 'rand'
+		output = 1 + (rand(seed(1))*9)
+		if (b(output:output) == ' ') go to 20
+		call random_seed(put=seed)
 	end do
 	
-	20 write(*,*) 'Opponent move'
+	20 write(*,*) 'Opponent move - ', output
 	pickMove = output
 	
 end function pickMove
@@ -222,6 +239,66 @@ integer function getMove(b)
 	getMove = playerMove
 	
 end function getMove
+
+integer function same(a, b, c, output)
+	
+	character, intent(in) :: a
+	character, intent(in) :: b
+	character, intent(in) :: c
+	integer, intent(out) :: output
+	
+	if (a /= b) then
+		output = 0
+	else
+		write(*,*) 'a = b'
+		if (a /= c) then
+			output = 0
+		else
+			output = 1
+			write(*,*) 'a = c'
+		end if
+	end if
+	same = output
+	
+end function same
+
+subroutine chkovr(b)
+	
+	character(len=9), intent(in) :: b
+	integer :: output
+	
+	output = same(b(1:1), b(2:2), b(3:3), output)
+	if (output == 1) then
+		!write(*,*) 'top row'
+		if (b(1:1) == 'X') then
+			write(*,*) 'Player wins'
+		else if (b(1:1) == '0') then
+			write(*,*) 'Computer wins'
+		end if
+	return
+	end if
+	
+	output = same(b(4:4), b(5:5), b(6:6), output)
+	if (output == 1) then
+		if (b(4:4) == 'X') then
+			write(*,*) 'Player wins'
+		else if (b(4:4) == '0') then
+			write(*,*) 'Computer wins'
+		end if
+	return
+	end if
+	output = same(b(7:7), b(8:8), b(9:9), output)
+	if (output == 1) then
+		if (b(7:7) == 'X') then
+			write(*,*) 'Player wins'
+		else if (b(7:7) == '0') then
+			write(*,*) 'Computer wins'
+		end if
+	return
+	end if
+	
+	
+end subroutine chkovr
 
 integer function chkplay(b, p)
 	
