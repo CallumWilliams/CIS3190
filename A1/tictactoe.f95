@@ -13,7 +13,7 @@ contains
 subroutine playTicTacToe()
 	
 	character(len=9) :: b = '         ' !blank board
-	integer :: gameState = 1
+	integer :: gameState = 0
 	integer :: playerMove;
 	integer :: compMove;
 	integer :: moveCount = 0;
@@ -32,19 +32,20 @@ subroutine playTicTacToe()
 		playerMove = getMove(b)
 		b(playerMove:playerMove) = 'X'
 		moveCount = moveCount + 1
+		call showBoard(b)
+		call chkovr(b, gameState)
+		if (gameState == 1) exit
 		if (moveCount > 8) then
 			write(*,*) 'Tie game'
-			call showBoard(b)
 			exit
 		end if
-		call showBoard(b)
-		!call chkovr(b)
 		compMove = pickMove(b)
 		b(compMove:compMove) = 'O'
 		moveCount = moveCount + 1
 		call showBoard(b)
+		call chkovr(b, gameState)
 		
-		if (gameState == 0) exit
+		if (gameState == 1) exit
 		
 	end do
 	
@@ -72,7 +73,6 @@ integer function pickMove(b)
 			output = i !in case either of the two success cases happen, keep track of blank space
 		end if
 	end do
-	write(*,*) checkSum
 	if ((checkSum == 8) .or. (checkSum == 2)) then
 		pickMove = output
 		go to 20
@@ -201,7 +201,7 @@ integer function pickMove(b)
 		call random_seed(put=seed)
 	end do
 	
-	20 write(*,*) 'Opponent move - ', output
+	20 write(*,*) 'Opponent move...'
 	pickMove = output
 	
 end function pickMove
@@ -250,53 +250,106 @@ integer function same(a, b, c, output)
 	if (a /= b) then
 		output = 0
 	else
-		write(*,*) 'a = b'
 		if (a /= c) then
 			output = 0
 		else
 			output = 1
-			write(*,*) 'a = c'
 		end if
 	end if
 	same = output
 	
 end function same
 
-subroutine chkovr(b)
+subroutine chkovr(b, output)
 	
 	character(len=9), intent(in) :: b
-	integer :: output
+	integer, intent(out) :: output
 	
 	output = same(b(1:1), b(2:2), b(3:3), output)
 	if (output == 1) then
 		!write(*,*) 'top row'
 		if (b(1:1) == 'X') then
 			write(*,*) 'Player wins'
-		else if (b(1:1) == '0') then
+			go to 200
+		else if (b(1:1) == 'O') then
 			write(*,*) 'Computer wins'
+			go to 200
 		end if
-	return
 	end if
 	
 	output = same(b(4:4), b(5:5), b(6:6), output)
 	if (output == 1) then
 		if (b(4:4) == 'X') then
 			write(*,*) 'Player wins'
-		else if (b(4:4) == '0') then
+			go to 200
+		else if (b(4:4) == 'O') then
 			write(*,*) 'Computer wins'
+			go to 200
 		end if
-	return
 	end if
 	output = same(b(7:7), b(8:8), b(9:9), output)
 	if (output == 1) then
 		if (b(7:7) == 'X') then
 			write(*,*) 'Player wins'
-		else if (b(7:7) == '0') then
+			go to 200
+		else if (b(7:7) == 'O') then
 			write(*,*) 'Computer wins'
+			go to 200
 		end if
-	return
+	end if
+	output = same(b(1:1), b(4:4), b(7:7), output)
+	if (output == 1) then
+		if (b(1:1) == 'X') then
+			write(*,*) 'Player wins'
+			go to 200
+		else if (b(1:1) == 'O') then
+			write(*,*) 'Computer wins'
+			go to 200
+		end if
+	end if
+	output = same(b(2:2), b(5:5), b(8:8), output)
+	if (output == 1) then
+		if (b(2:2) == 'X') then
+			write(*,*) 'Player wins'
+			go to 200
+		else if (b(2:2) == 'O') then
+			write(*,*) 'Computer wins'
+			go to 200
+		end if
+	end if
+	output = same(b(3:3), b(6:6), b(9:9), output)
+	if (output == 1) then
+		if (b(3:3) == 'X') then
+			write(*,*) 'Player wins'
+			go to 200
+		else if (b(3:3) == 'O') then
+			write(*,*) 'Computer wins'
+			go to 200
+		end if
+	end if
+	output = same(b(1:1), b(5:5), b(9:9), output)
+	if (output == 1) then
+		if (b(1:1) == 'X') then
+			write(*,*) 'Player wins'
+			go to 200
+		else if (b(1:1) == 'O') then
+			write(*,*) 'Computer wins'
+			go to 200
+		end if
+	end if
+	output = same(b(3:3), b(5:5), b(7:7), output)
+	if (output == 1) then
+		if (b(3:3) == 'X') then
+			write(*,*) 'Player wins'
+			go to 200
+		else if (b(3:3) == 'O') then
+			write(*,*) 'Computer wins'
+			go to 200
+		end if
 	end if
 	
+	output = 0
+	200 return
 	
 end subroutine chkovr
 
