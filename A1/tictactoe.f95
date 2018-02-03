@@ -225,11 +225,19 @@ integer function getMove(b)
 	
 	character(len=9), intent(in) :: b
 	integer :: playerMove
+	integer :: ierror;
 	
 	do
-		write(*,*) 'Your move: '
-		read(*,50) playerMove
-		50 format(I1)
+		!if input's not an integer
+		do 
+			write(*,*) 'Your move: '
+			read(*,50, iostat=ierror) playerMove
+			50 format(I1)
+			if (ierror == 0) then
+				exit
+			end if
+			write(*,*) 'Please enter an integer'
+		end do
 		if (chkplay(b, playerMove) == 1) then
 			exit
 		else
