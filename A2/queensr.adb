@@ -1,9 +1,25 @@
 with ada.Text_IO; use Ada.Text_IO;
 with ada.Integer_Text_IO; use Ada.Integer_Text_IO;
+
 procedure QueensR is
+	
+	--global variable (for counting number of valid boards)
+	successCount : Integer := 1;
 	
 	--establish "board" as a type of 2D array 
 	type board is array(1..8, 1..8) of character;
+	
+	procedure saveBoardToFile(b : board) is
+		
+		file : file_Type;
+		
+	begin
+		
+		create(file, out_file, "queensR.txt");
+		put_line("worked");
+		close(file);
+		
+	end saveBoardToFile;
 	
 	--setup an empty board
 	function setupBoard return board is
@@ -27,7 +43,8 @@ procedure QueensR is
 	begin
 		
 		new_line;
-		put_line("Board Output");
+		put("Board Output "); put(successCount); new_line;
+		successCount := successCount + 1;
 		for i in 1..8 loop
 			for j in 1..8 loop
 				put(b(i,j));
@@ -191,9 +208,9 @@ procedure QueensR is
 	
 begin
 	
-	
 	b := setupBoard;
 	--run algorithm
+	saveBoardToFile(b);
 	solve8Queens(b, 1);
 	
 end QueensR;

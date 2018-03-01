@@ -1,12 +1,11 @@
-with ada.Text_IO; use Ada.Text_IO;
-with ada.Integer_Text_IO; use Ada.Integer_Text_IO;
-procedure QueensR is
-	
-	--establish "board" as a type of 2D array 
-	type board is array(1..8, 1..8) of character;
+with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
+with stack; use stack;
+
+procedure QueensNR is
 	
 	--setup an empty board
-	function setupBoard return board is
+	function setupBoard return stack.board is
 		
 		b : board;
 		
@@ -22,7 +21,7 @@ procedure QueensR is
 	end setupBoard;
 	
 	--display contents of board.
-	procedure displayBoard(b : board) is
+	procedure displayBoard(b : stack.board) is
 		
 	begin
 		
@@ -40,7 +39,7 @@ procedure QueensR is
 	--checks cell (r, c) of board to see if it is a valid place for a piece
 	--does so by checking the vertical row, then each of the four diagonals
 	--(i.e. upper-left, upper-right, lower-left, and lower-right)
-	function isValidPlacement(b : board; r : integer; c : integer) return Boolean is
+	function isValidPlacement(b : stack.board; r : integer; c : integer) return Boolean is
 		
 		rTmp : integer;
 		cTmp : integer;
@@ -152,22 +151,89 @@ procedure QueensR is
 	end isValidPlacement;
 	
 	--function called to solve the 8 queens problem (non-recursively)
-	procedure solve8Queens(b : board; row : integer) is
+	procedure solve8Queens is
 		
-		bTmp : board;
+		b : stack.board;
+		row : Integer;
+		col : array(1..8) of Integer;
+		found_place : Boolean;
+		i : Integer;--can't use a conventional for loop because we need to backtrack to col(row)
 		
 	begin
 		
+		row := 1;--starting point for board
+		i := 1;
+		for i in 1..8 loop
+			col(i) := 1;
+		end loop;
 		
+		--initial setup for board
+		b := setupBoard;
+		
+		Main_Loop: loop
+			
+			found_place := false;
+			
+			Mid_Loop: loop
+				
+				exit Mid_Loop when i = 9;--in case we don't find a place
+				if isValidPlacement(b, row, i) then
+					
+					--we found a valid placement, leave the loop
+					col(row) := i;--keep track of column on current row
+					found_place := true;
+				
+				end if;
+				
+				exit Mid_Loop when found_place;
+				
+				i := i + 1;
+				
+			end loop Mid_Loop;
+			
+			--check found_place value
+			if found_place then
+				
+				--progress
+				put_line("progress");
+				b(row, col(row)) := 'Q';
+				push(b);
+				displayBoard(b);
+				row := row + 1;
+				i := 1;
+				
+			else
+				
+				--revert
+				put_line("removed");
+				exit Main_Loop when stack_is_empty;
+				pop(b);
+				displayBoard(b);
+				b := stack_top;
+				--undo queen on previous row
+				row := row - 1;
+				b(row, col(row)) := '.';
+				i := col(row) + 1;
+				
+			end if;
+			
+			--check if we are done
+			if stack_size = 8 then
+				
+				displayBoard(b);
+				--we are done with this config. Revert.
+				pop(b);
+				row := row - 1;
+				i := col(row) + 1;
+				
+			end if;
+			
+		end loop Main_Loop;
 		
 	end solve8Queens;
 	
-	b : board;
-	
 begin
 	
-	b := setupBoard;
-	--setup quick board (to test isValidPlacement
-	solve8Queens(b, 1);
+	solve8Queens;
 	
-end QueensR;
+end QueensNR;

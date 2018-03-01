@@ -14,3 +14,5 @@ clean:
 	rm queensnr 
 	rm queensnr.ali
 	rm queensnr.o
+	rm stack.o
+	stack.ali
