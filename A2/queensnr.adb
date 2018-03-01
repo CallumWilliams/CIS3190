@@ -4,6 +4,8 @@ with stack; use stack;
 
 procedure QueensNR is
 	
+	successCount : Integer := 1;
+	
 	--setup an empty board
 	function setupBoard return stack.board is
 		
@@ -27,6 +29,7 @@ procedure QueensNR is
 		
 		new_line;
 		put_line("Board Output");
+		successCount := successCount + 1;
 		for i in 1..8 loop
 			for j in 1..8 loop
 				put(b(i,j));
@@ -174,6 +177,7 @@ procedure QueensNR is
 			
 			found_place := false;
 			
+			--find a spot to put the queen
 			Mid_Loop: loop
 				
 				exit Mid_Loop when i = 9;--in case we don't find a place
@@ -195,21 +199,16 @@ procedure QueensNR is
 			if found_place then
 				
 				--progress
-				put_line("progress");
 				b(row, col(row)) := 'Q';
 				push(b);
-				displayBoard(b);
 				row := row + 1;
 				i := 1;
 				
 			else
 				
 				--revert
-				put_line("removed");
-				exit Main_Loop when stack_is_empty;
+				exit Main_Loop when stack_is_empty;--terminate main loop
 				pop(b);
-				displayBoard(b);
-				b := stack_top;
 				--undo queen on previous row
 				row := row - 1;
 				b(row, col(row)) := '.';
@@ -224,6 +223,7 @@ procedure QueensNR is
 				--we are done with this config. Revert.
 				pop(b);
 				row := row - 1;
+				b(row, col(row)) := '.';
 				i := col(row) + 1;
 				
 			end if;
