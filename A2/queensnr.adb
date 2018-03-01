@@ -6,6 +6,47 @@ procedure QueensNR is
 	
 	successCount : Integer := 1;
 	
+	--resets file
+	procedure setupFile is
+		
+		file : file_Type;
+		
+	begin
+		
+		create(file, out_file, "queensNR.txt");
+		close(file);
+		
+	end setupFile;
+	
+	--saves contents of b to file
+	procedure saveBoardToFile(b : board) is
+		
+		file : file_Type;
+		
+	begin
+		
+		open(file, append_file, "queensNR.txt");
+		
+		if is_open(file) then
+			
+			put_line(file, "Valid Config");
+			for i in 1..8 loop
+				
+				for j in 1..8 loop
+					
+					put(file, b(i,j));
+					
+				end loop;
+				put_line(file, "");
+				
+			end loop;
+			
+			close(file);
+			
+		end if;
+		
+	end saveBoardToFile;
+	
 	--setup an empty board
 	function setupBoard return stack.board is
 		
@@ -220,6 +261,7 @@ procedure QueensNR is
 			if stack_size = 8 then
 				
 				displayBoard(b);
+				saveBoardToFile(b);
 				--we are done with this config. Revert.
 				pop(b);
 				row := row - 1;
@@ -234,6 +276,7 @@ procedure QueensNR is
 	
 begin
 	
+	setupFile;
 	solve8Queens;
 	
 end QueensNR;

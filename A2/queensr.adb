@@ -9,15 +9,44 @@ procedure QueensR is
 	--establish "board" as a type of 2D array 
 	type board is array(1..8, 1..8) of character;
 	
-	procedure saveBoardToFile(b : board) is
+	--resets file
+	procedure setupFile is
 		
 		file : file_Type;
 		
 	begin
 		
 		create(file, out_file, "queensR.txt");
-		put_line("worked");
 		close(file);
+		
+	end setupFile;
+	
+	--saves contents of b to file
+	procedure saveBoardToFile(b : board) is
+		
+		file : file_Type;
+		
+	begin
+		
+		open(file, append_file, "queensR.txt");
+		
+		if is_open(file) then
+			
+			put_line(file, "Valid Config");
+			for i in 1..8 loop
+				
+				for j in 1..8 loop
+					
+					put(file, b(i,j));
+					
+				end loop;
+				put_line(file, "");
+				
+			end loop;
+			
+			close(file);
+			
+		end if;
 		
 	end saveBoardToFile;
 	
@@ -177,8 +206,9 @@ procedure QueensR is
 		
 		if row = 9 then
 			
-			displayBoard(b);
 			--We've reached the a state where the board is full.
+			displayBoard(b);
+			saveBoardToFile(b);
 			
 		else
 			
@@ -208,9 +238,9 @@ procedure QueensR is
 	
 begin
 	
+	setupFile;
 	b := setupBoard;
 	--run algorithm
-	saveBoardToFile(b);
 	solve8Queens(b, 1);
 	
 end QueensR;
