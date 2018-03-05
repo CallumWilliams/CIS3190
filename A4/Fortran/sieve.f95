@@ -45,10 +45,10 @@ subroutine solveSieve(n)
 					
 					!check if value is perfectly divisible
 					if (mod(values(j), divs(i)) == 0) then
-						!it works for now. Keep it.
-					else
+						
 						!remove value
 						values(j) = 0;
+						
 					end if
 					
 				end if
@@ -61,7 +61,10 @@ subroutine solveSieve(n)
 	
 	do i = 1, n - 1, 1
 		
-		write(*,*) i, ' ', values(i), ' ';
+		if (values(i) /= 0) then
+			!was not removed. Print.
+			write(*,*) values(i);
+		end if;
 		
 	end do
 	
