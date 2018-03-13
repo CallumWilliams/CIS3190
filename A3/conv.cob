@@ -12,7 +12,10 @@ data division.
 			01 in-line pic x(30).
 	working-storage section.
 		77 eof pic 9 value 1.
-		77 sum pic 999.
+		77 err pic 9 value 1.
+		77 strlen pic 99.
+		77 i pic 9 value 1.
+		77 total pic 999.
 		
 procedure division.
 	display 'Enter the Roman Numeral to be converted: '.
@@ -28,8 +31,18 @@ procedure division.
 	readLine.
 		read stdin into in-line at end move zero to eof.
 		
+		move 1 to err.
 		if eof is not equal to zero
-			display in-line.
+			perform calculateValue.
 	
 	calculateValue.
-		move 0 to sum.
+		unstring in-line
+			delimited by spaces
+			into in-line count in strlen.
+		move 0 to total.
+		move 1 to i.
+		perform calc-loop until i is greater than strlen.
+		
+		calc-loop.
+			display in-line(i:1).
+			add 1 to i.
