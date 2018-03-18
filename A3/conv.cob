@@ -11,13 +11,13 @@ data division.
 		fd stdin.
 			01 in-line pic x(30).
 	working-storage section.
-		01 parsing.
-			05 initial-parse pic 9 value 1.
-			05 magnitude pic 9.
+		01 array.
+			05 convertedValues pic 9999 occurs 30 times.
 		77 eof pic 9 value 1.
 		77 err pic 9 value 1.
 		77 strlen pic 99.
-		77 i pic 9 value 1.
+		77 counter pic 9 value 1.
+		77 count_next pic 9.
 		77 total pic 999999.
 		77 current pic x.
 		
@@ -43,66 +43,54 @@ procedure division.
 			delimited by spaces
 			into in-line count in strlen.
 		move 0 to total.
-		move 1 to i.
-		move 1 to initial-parse.
-		perform calc-loop until i is greater than strlen.
-		display in-line, ' = ', total.
+		move 1 to counter.
+		perform setup-values until counter is greater than strlen.
 		
-		calc-loop.
-			move in-line(i:1) to current.
+		move 1 to counter.
+		move 2 to count_next;
+		perform calc-loop until counter is greater than strlen.
+		
+		display total.
+		
+		setup-values.
+			
+			move in-line(counter:1) to current.
 			if current is equal to 'M' or 'm'
-				
-				perform addM
+				move 1000 to convertedValues(counter)
 				
 			else if current is equal to 'D' or 'd'
+				move 500 to convertedValues(counter)
 				
-				perform addD
-					
 			else if current is equal to 'C' or 'c'
-				
-				perform addC
+				move 100 to convertedValues(counter)
 				
 			else if current is equal to 'L' or 'l'
+				move 50 to convertedValues(counter)
 				
-				perform addL
-				
-			else if current is equal to 'X' or 'x'
-				
-				perform addX
+			else if current is equal to 'X' or 'x'	
+				move 10 to convertedValues(counter)
 				
 			else if current is equal to 'V' or 'v'
-				
-				perform addV
+				move 5 to convertedValues(counter)
 				
 			else if current is equal to 'I' or 'i'
-				
-				perform addI
+				move 1 to convertedValues(counter)
 				
 			else
-				
 				display 'error'.
 				
-			add 1 to i.
-			display total.
+			add 1 to counter.
 		
-		addM.
-			add 1000 to total.
+		calc-loop.
 			
-		addD.
-			add 500 to total.
+			if counter is less than strlen
+				if convertedValues(counter) is less than convertedValues(count_next)
+					subtract convertedValues(counter) from total
+				else
+					add convertedValues(counter) to total
+			else
+				add convertedValues(counter) to total.
 			
-		addC.
-			add 100 to total.
-			
-		addL.
-			add 50 to total.
-			
-		addX.
-			add 10 to total.
-			
-		addV.
-			add 5 to total.
-			
-		addI.
-			add 1 to total.
+			add 1 to counter.
+			add 1 to count_next.
 			
