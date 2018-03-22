@@ -1,9 +1,10 @@
-FLAGS = -x -free -Wall
+FLAGS = -free -Wall
 
 all: conv
 
-conv: conv.cob
-	cobc $(FLAGS) conv.cob romanA3_1.cob
+conv: conv.cob romanA3_1.cob
+	cobc -x $(FLAGS) romanA3_1.cob
+	cobc -m $(FLAGS) conv.cob
 
 clean:
-	rm conv romanA3_1
+	rm conv.so romanA3_1

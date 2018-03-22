@@ -15,7 +15,6 @@ data division.
 	working-storage section.
 		77 N pic s99.
 		77 temp pic s9(8).
-		77 ret pic s9.
 		01 array-area.
 			02 r pic x(1) occurs 30 times.
 		01 input-area.
@@ -37,9 +36,11 @@ data division.
 			02 filler pic x value space.
 			02 out-r pic x(30).
 			02 filler pic x(3) value spaces.
-			02 out-eq pic z(9).
+			02 out-eq pic 999999.
 		01 parsing.
-			02 eof pic 9.
+			02 len pic 99.
+			02 ret pic 9.
+			02 eof pic 9 value 1.
 
 procedure division.
 	
@@ -51,7 +52,7 @@ procedure division.
 	write stdout from underline-2 after advancing 1 line.
 	
 	move 1 to N.
-	move 1 to eof.
+	move 0 to ret.
 	move spaces to array-area.
 	
 	perform readLine until eof = 0.
@@ -63,8 +64,15 @@ procedure division.
 	readLine.
 		read standard-input into input-area at end move zero to eof.
 		
-		if eof is not equal to zero
-			call "conv" using input-area.
+		unstring input-area delimited by spaces into input-area count in len.
+		
+		call "conv" using input-area, len, ret, temp.
+		
+		if ret is equal to 0
+			move temp to out-eq
+			move input-area to out-r
+			write stdout from print-line after advancing 1 line.
+		
 		move 1 to N.
-		move 1 to eof.
+		move 0 to ret.
 		move spaces to input-area.
