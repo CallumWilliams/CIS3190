@@ -14,7 +14,7 @@ data division.
 			01 stdout pic x(80).
 	working-storage section.
 		77 N pic s99.
-		77 temp pic s9(8).
+		77 temp pic 999999.
 		01 array-area.
 			02 r pic x(1) occurs 30 times.
 		01 input-area.
