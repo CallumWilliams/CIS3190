@@ -3,7 +3,7 @@ program-id. romannumerals.
 environment division.
 	input-output section.
 		file-control.
-			select standard-input assign to "input.txt" organization is line sequential.
+			select standard-input assign to fname organization is line sequential.
 			select standard-output assign to display.
 
 data division.
@@ -15,6 +15,7 @@ data division.
 	working-storage section.
 		77 N pic s99.
 		77 temp pic 999999.
+		77 fname pic x(80).
 		01 array-area.
 			02 r pic x(1) occurs 30 times.
 		01 input-area.
@@ -23,6 +24,8 @@ data division.
 		01 title-line.
 			02 filler pic x(11) value spaces.
 			02 filler pic x(24) value 'Roman Number Equivalents'.
+		01 user-input-sentence.
+			02 filler pic x(27) value 'Please enter the file name:'.
 		01 underline-1.
 			02 filler pic x(45) value '---------------------------------------------'.
 		01 col-heads.
@@ -43,6 +46,9 @@ data division.
 			02 eof pic 9 value 1.
 
 procedure division.
+	
+	display user-input-sentence.
+	accept fname.
 	
 	open input standard-input, output standard-output.
 	
