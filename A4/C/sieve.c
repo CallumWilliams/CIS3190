@@ -51,7 +51,6 @@ void calculateSieve(int n) {
 		exit(0);
 	}
 	//print out results
-	fprintf(fp, "List of primes\n");
 	for (int i = 0; i < n - 1; i++) {
 		
 		if (value[i] == 0) {

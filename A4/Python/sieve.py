@@ -25,10 +25,10 @@ else:
 					if (value[i] % d == 0):
 						value[i] = 0 #erase value if it is divisible
 	
-	successList = list()
+	file_obj = open("sieve.txt", "w")
 	#print successful primes
 	for val in value:
 		if (val != 0):
-			successList.append(val)
+			file_obj.write(str(val) + " ")
 
-	print(successList)
+	

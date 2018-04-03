@@ -4,4 +4,4 @@ procedure sieve is
 
 begin
 
-end sieve;
+end sieve
